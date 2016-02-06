@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from pkg_resources import parse_version
 
+import ast
 import pickle
 import os
 import subprocess
@@ -71,6 +72,17 @@ class Dat(object):
         subprocess.Popen.terminate(p)
         return self.download(link, path=path)
     return False
+
+  def list(self, link, path=None):
+    opts = {}
+    if path:
+      opts['path'] = path
+    p = self._call('list {}'.format(link), opts)
+    res = ''
+    for line in iter(p.stdout.readline, b''):
+      line = line.decode().strip()
+      res += line
+    return res
 
   def _call(self, cmd, opts=None):
     if opts is None:
